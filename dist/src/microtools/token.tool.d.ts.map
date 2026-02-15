@@ -1,0 +1,1 @@
+{"version":3,"file":"token.tool.d.ts","sourceRoot":"","sources":["../../../src/microtools/token.tool.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,cAAc,EAAE,aAAa,EAAE,MAAM,kBAAkB,CAAC;AAEtE,KAAK,WAAW,GAAG;IACjB,SAAS,EAAE,OAAO,CAAC;IACnB,KAAK,EAAE,aAAa,CAAC;IACrB,MAAM,CAAC,EAAE,MAAM,CAAC;CACjB,CAAC;AAUF,wBAAgB,cAAc,CAAC,KAAK,EAAE,cAAc,GAAG,WAAW,GAAG,IAAI,CAiDxE"}

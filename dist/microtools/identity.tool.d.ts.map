@@ -1,0 +1,1 @@
+{"version":3,"file":"identity.tool.d.ts","sourceRoot":"","sources":["../../src/microtools/identity.tool.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,cAAc,EAAE,aAAa,EAAE,MAAM,kBAAkB,CAAC;AAEtE,KAAK,cAAc,GAAG;IACpB,SAAS,EAAE,UAAU,CAAC;IACtB,KAAK,EAAE,aAAa,CAAC;IACrB,MAAM,CAAC,EAAE,MAAM,CAAC;CACjB,CAAC;AASF,wBAAgB,iBAAiB,CAAC,KAAK,EAAE,cAAc,GAAG,cAAc,GAAG,IAAI,CAoD9E"}

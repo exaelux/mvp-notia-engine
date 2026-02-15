@@ -1,0 +1,1 @@
+{"version":3,"file":"anchor.d.ts","sourceRoot":"","sources":["../../../src/iota/anchor.ts"],"names":[],"mappings":"AAEA,MAAM,MAAM,YAAY,GAAG;IACzB,OAAO,EAAE,WAAW,CAAC;IACrB,cAAc,EAAE,MAAM,CAAC;IACvB,WAAW,EAAE,MAAM,CAAC;IACpB,MAAM,EAAE,WAAW,CAAC;CACrB,CAAC;AAgBF,wBAAgB,YAAY,CAAC,MAAM,EAAE,OAAO,GAAG,YAAY,CAa1D"}
