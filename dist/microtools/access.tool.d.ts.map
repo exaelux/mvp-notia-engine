@@ -1,1 +1,0 @@
-{"version":3,"file":"access.tool.d.ts","sourceRoot":"","sources":["../../src/microtools/access.tool.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,cAAc,EAAE,aAAa,EAAE,MAAM,kBAAkB,CAAC;AAEtE,KAAK,YAAY,GAAG;IAClB,SAAS,EAAE,QAAQ,CAAC;IACpB,KAAK,EAAE,aAAa,CAAC;IACrB,MAAM,CAAC,EAAE,MAAM,CAAC;CACjB,CAAC;AAQF,wBAAgB,eAAe,CAAC,KAAK,EAAE,cAAc,GAAG,YAAY,GAAG,IAAI,CA2B1E"}
