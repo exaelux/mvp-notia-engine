@@ -9,6 +9,8 @@ type CreateBundleInput = {
   event: unknown;
   aggregated: AggregatedInput;
   previous_bundle_ref?: string;
+  additional_ancestors?: string[];
+  max_depth?: number;
 };
 
 type CoreMeaning = {
@@ -44,7 +46,29 @@ function sortKeysDeep(value: unknown): unknown {
 
 export function createBundle(input: CreateBundleInput): SemanticBundle {
   const timestamp = new Date().toISOString();
-  const derived_from = input.previous_bundle_ref ? [input.previous_bundle_ref] : [];
+  const ancestry: string[] = [];
+
+  if (input.previous_bundle_ref) {
+    ancestry.push(input.previous_bundle_ref);
+  }
+
+  if (input.additional_ancestors) {
+    for (const ancestor of input.additional_ancestors) {
+      ancestry.push(ancestor);
+    }
+  }
+
+  const deduplicated: string[] = [];
+  for (const ancestor of ancestry) {
+    if (!deduplicated.includes(ancestor)) {
+      deduplicated.push(ancestor);
+    }
+  }
+
+  const requestedDepth = input.max_depth ?? 10;
+  const effectiveDepth =
+    input.previous_bundle_ref && requestedDepth < 1 ? 1 : requestedDepth;
+  const derived_from = deduplicated.slice(0, effectiveDepth);
 
   const meaningWithoutHash = {
     bundle_ref: "",

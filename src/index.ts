@@ -3,6 +3,7 @@ import type { CanonicalEvent } from "./core/types.js";
 import { structuralCheck } from "./validator/structural-checker.js";
 import { validateCoreBundle } from "./validator/core-validator.js";
 import { routeEvent } from "./pipeline/router.js";
+import { normalize } from "./pipeline/normalizer.js";
 
 import { interpretAccess } from "./microtools/access.tool.js";
 import { interpretIdentity } from "./microtools/identity.tool.js";
@@ -14,6 +15,8 @@ import { createBundle } from "./bundler/bundler.js";
 
 type RunOptions = {
   previous_bundle_ref?: string;
+  additional_ancestors?: string[];
+  max_depth?: number;
 };
 
 type StructuralFailResult = {
@@ -32,9 +35,10 @@ type CoreSchemaFailResult = {
 };
 
 export function runNotia(
-  event: CanonicalEvent,
+  input: unknown,
   options?: RunOptions,
 ): StructuralFailResult | CoreSchemaFailResult | SemanticBundleResult {
+  const event = normalize(input);
   const structural = structuralCheck(event);
 
   if (structural.status === "fail") {
@@ -50,7 +54,8 @@ export function runNotia(
     };
   }
 
-  const routes = routeEvent(event);
+  const canonicalEvent = event as CanonicalEvent;
+  const routes = routeEvent(canonicalEvent);
   const results: Array<{
     microtool: string;
     state: "valid" | "hold" | "reject";
@@ -59,28 +64,28 @@ export function runNotia(
 
   for (const route of routes) {
     if (route === "access") {
-      const r = interpretAccess(event);
+      const r = interpretAccess(canonicalEvent);
       if (r) {
         results.push(r);
       }
     }
 
     if (route === "identity") {
-      const r = interpretIdentity(event);
+      const r = interpretIdentity(canonicalEvent);
       if (r) {
         results.push(r);
       }
     }
 
     if (route === "supply") {
-      const r = interpretSupply(event);
+      const r = interpretSupply(canonicalEvent);
       if (r) {
         results.push(r);
       }
     }
 
     if (route === "token") {
-      const r = interpretToken(event);
+      const r = interpretToken(canonicalEvent);
       if (r) {
         results.push(r);
       }
@@ -88,18 +93,28 @@ export function runNotia(
   }
 
   const aggregated = aggregate(results);
-  const bundle = createBundle(
-    options?.previous_bundle_ref
-      ? {
-          event,
-          aggregated,
-          previous_bundle_ref: options.previous_bundle_ref,
-        }
-      : {
-          event,
-          aggregated,
-        },
-  );
+  const bundleInput: {
+    event: CanonicalEvent;
+    aggregated: typeof aggregated;
+    previous_bundle_ref?: string;
+    additional_ancestors?: string[];
+    max_depth?: number;
+  } = {
+    event: canonicalEvent,
+    aggregated,
+  };
+
+  if (options?.previous_bundle_ref) {
+    bundleInput.previous_bundle_ref = options.previous_bundle_ref;
+  }
+  if (options?.additional_ancestors) {
+    bundleInput.additional_ancestors = options.additional_ancestors;
+  }
+  if (options?.max_depth !== undefined) {
+    bundleInput.max_depth = options.max_depth;
+  }
+
+  const bundle = createBundle(bundleInput);
 
   const coreValidation = validateCoreBundle(bundle);
   if (!coreValidation.valid) {
