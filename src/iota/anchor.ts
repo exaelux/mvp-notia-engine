@@ -1,11 +1,5 @@
 import { createHash } from "node:crypto";
-
-export type AnchorResult = {
-  network: "IOTA-MOCK";
-  transaction_id: string;
-  anchored_at: string;
-  status: "confirmed";
-};
+import type { AnchorAdapter, AnchorResult } from "./types.js";
 
 function extractBundleRef(bundle: unknown): string {
   if (bundle === null || typeof bundle !== "object") {
@@ -21,17 +15,20 @@ function extractBundleRef(bundle: unknown): string {
   return typeof bundleRef === "string" ? bundleRef : "";
 }
 
-export function anchorBundle(bundle: unknown): AnchorResult {
-  const anchored_at = new Date().toISOString();
-  const bundleRef = extractBundleRef(bundle);
-  const hash = createHash("sha256")
-    .update(`${bundleRef}${anchored_at}`)
-    .digest("hex");
+export class MockIotaAnchorAdapter implements AnchorAdapter {
+  async anchor(bundle: unknown): Promise<AnchorResult> {
+    const anchored_at = new Date().toISOString();
+    const bundleRef = extractBundleRef(bundle);
 
-  return {
-    network: "IOTA-MOCK",
-    transaction_id: `iota:tx:${hash}`,
-    anchored_at,
-    status: "confirmed",
-  };
+    const hash = createHash("sha256")
+      .update(`${bundleRef}${anchored_at}`)
+      .digest("hex");
+
+    return {
+      network: "IOTA-MOCK",
+      transaction_id: `iota:tx:${hash}`,
+      anchored_at,
+      status: "confirmed",
+    };
+  }
 }
