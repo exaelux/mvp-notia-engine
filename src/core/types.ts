@@ -7,6 +7,7 @@ export interface CanonicalEvent {
   domain: string;
   type: string;
   timestamp: string;
+  meaning?: Record<string, unknown>;
   actor_ref?: string;
   resource_ref?: string;
   context?: Record<string, unknown>;
@@ -18,22 +19,27 @@ export interface StructuralCheckResult {
 }
 
 export interface MicrotoolResult {
-  domain: string;
+  microtool: string;
   state: SemanticState;
-  reason_code?: string;
-  metadata?: Record<string, unknown>;
+  reason?: string;
 }
 
 export interface AggregatedResult {
-  states: MicrotoolResult[];
   aggregated_state: SemanticState;
+  domains: Record<string, { state: SemanticState; reason?: string }>;
+}
+
+export interface SemanticBundleMeaning {
+  bundle_ref: string;
+  aggregated_state: SemanticState;
+  domains: Record<string, { state: SemanticState; reason?: string }>;
+  derived_from: string[];
+  event: unknown;
 }
 
 export interface SemanticBundle {
-  bundle_id: string;
+  existence: true;
+  meaning: SemanticBundleMeaning;
+  visibility_abstract: string;
   timestamp: string;
-  deterministic: true;
-  aggregated_state: SemanticState;
-  states: MicrotoolResult[];
-  anchors: string[];
 }

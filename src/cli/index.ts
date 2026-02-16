@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import type { CanonicalEvent } from "../core/types.js";
 import { runNotia } from "../index.js";
-import { anchorBundle } from "../iota/anchor.js";
+import { MockIotaAnchorAdapter } from "../iota/anchor.js";
 
 type CliOptions = {
   filePath: string;
@@ -10,6 +10,23 @@ type CliOptions = {
   previousBundleRef?: string;
   help?: boolean;
 };
+
+const BUNDLE_REF_HEX_REGEX = /^[a-f0-9]{64}$/;
+const BUNDLE_REF_URI_REGEX = /^noema:bundle:sha256:([a-f0-9]{64})$/;
+
+function normalizePreviousBundleRef(value: string): string | null {
+  const trimmed = value.trim();
+  if (BUNDLE_REF_HEX_REGEX.test(trimmed)) {
+    return trimmed;
+  }
+
+  const uriMatch = trimmed.match(BUNDLE_REF_URI_REGEX);
+  if (uriMatch && uriMatch[1]) {
+    return uriMatch[1];
+  }
+
+  return null;
+}
 
 function parseArgs(argv: string[]): CliOptions | null {
   if (argv.includes("--help") || argv.includes("-h")) {
@@ -57,12 +74,15 @@ function parseArgs(argv: string[]): CliOptions | null {
         process.exitCode = 1;
         return null;
       }
-      if (typeof value !== "string" || !value.startsWith("noema:bundle:sha256:")) {
-        console.error("Invalid --previous-bundle-ref format. Expected prefix: noema:bundle:sha256:");
+      const normalized = normalizePreviousBundleRef(value);
+      if (!normalized) {
+        console.error(
+          "Invalid --previous-bundle-ref format. Expected 64-char hex or noema:bundle:sha256:<64-char-hex>.",
+        );
         process.exitCode = 1;
         return null;
       }
-      previousBundleRef = value;
+      previousBundleRef = normalized;
       continue;
     }
 
@@ -166,6 +186,7 @@ async function main(): Promise<void> {
   }
 
   let previousBundleRef = options.previousBundleRef;
+  const anchorAdapter = options.anchor ? new MockIotaAnchorAdapter() : null;
 
   for (let i = 0; i < events.length; i++) {
     const event = events[i];
@@ -193,8 +214,8 @@ async function main(): Promise<void> {
     }
 
     printSuccess(index, result.bundle, options.verbose);
-    if (options.anchor) {
-      const anchor = anchorBundle(result.bundle);
+    if (anchorAdapter) {
+      const anchor = await anchorAdapter.anchor(result.bundle);
       if (options.verbose) {
         console.log(JSON.stringify(anchor, null, 2));
       } else {
