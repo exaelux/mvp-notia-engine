@@ -6,3 +6,5 @@ dist/
 coverage/
 
 docs/iota-update-checklist.md
+
+private/
