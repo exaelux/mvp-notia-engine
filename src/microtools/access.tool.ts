@@ -6,12 +6,6 @@ type AccessResult = {
   reason?: string;
 };
 
-type AccessEventShape = CanonicalEvent & {
-  meaning?: {
-    action?: unknown;
-  };
-};
-
 export function interpretAccess(event: CanonicalEvent): AccessResult | null {
   if (event.domain !== "access") {
     return null;
@@ -25,7 +19,7 @@ export function interpretAccess(event: CanonicalEvent): AccessResult | null {
     };
   }
 
-  const action = (event as AccessEventShape).meaning?.action;
+  const action = event.attributes?.action;
 
   if (action === "enter" || action === "exit") {
     return {

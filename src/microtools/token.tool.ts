@@ -6,14 +6,6 @@ type TokenResult = {
   reason?: string;
 };
 
-type TokenEventShape = CanonicalEvent & {
-  meaning?: {
-    token_id?: unknown;
-    token_standard?: unknown;
-    expired?: unknown;
-  };
-};
-
 export function interpretToken(event: CanonicalEvent): TokenResult | null {
   if (event.domain !== "token") {
     return null;
@@ -27,12 +19,11 @@ export function interpretToken(event: CanonicalEvent): TokenResult | null {
     };
   }
 
-  const meaning = (event as TokenEventShape).meaning;
+  const token_id = event.attributes?.token_id;
+  const token_standard = event.attributes?.token_standard;
+  const expired = event.attributes?.expired;
 
-  if (
-    typeof meaning?.token_id !== "string" ||
-    meaning.token_id.trim().length === 0
-  ) {
+  if (typeof token_id !== "string" || token_id.trim().length === 0) {
     return {
       microtool: "token",
       state: "reject",
@@ -40,10 +31,7 @@ export function interpretToken(event: CanonicalEvent): TokenResult | null {
     };
   }
 
-  if (
-    typeof meaning.token_standard !== "string" ||
-    meaning.token_standard.trim().length === 0
-  ) {
+  if (typeof token_standard !== "string" || token_standard.trim().length === 0) {
     return {
       microtool: "token",
       state: "hold",
@@ -51,7 +39,7 @@ export function interpretToken(event: CanonicalEvent): TokenResult | null {
     };
   }
 
-  if (meaning.expired === true) {
+  if (expired === true) {
     return {
       microtool: "token",
       state: "reject",
@@ -59,8 +47,5 @@ export function interpretToken(event: CanonicalEvent): TokenResult | null {
     };
   }
 
-  return {
-    microtool: "token",
-    state: "valid",
-  };
+  return { microtool: "token", state: "valid" };
 }

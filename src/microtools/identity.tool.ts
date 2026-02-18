@@ -6,13 +6,6 @@ type IdentityResult = {
   reason?: string;
 };
 
-type IdentityEventShape = CanonicalEvent & {
-  meaning?: {
-    subject_ref?: unknown;
-    identity_status?: unknown;
-  };
-};
-
 export function interpretIdentity(event: CanonicalEvent): IdentityResult | null {
   if (event.domain !== "identity") {
     return null;
@@ -26,11 +19,9 @@ export function interpretIdentity(event: CanonicalEvent): IdentityResult | null 
     };
   }
 
-  const meaning = (event as IdentityEventShape).meaning;
-
   if (
-    typeof meaning?.subject_ref !== "string" ||
-    meaning.subject_ref.trim().length === 0
+    typeof event.subject_ref !== "string" ||
+    event.subject_ref.trim().length === 0
   ) {
     return {
       microtool: "identity",
@@ -39,25 +30,18 @@ export function interpretIdentity(event: CanonicalEvent): IdentityResult | null 
     };
   }
 
-  if (meaning.identity_status === "verified") {
-    return {
-      microtool: "identity",
-      state: "valid",
-    };
+  const identity_status = event.attributes?.identity_status;
+
+  if (identity_status === "verified") {
+    return { microtool: "identity", state: "valid" };
   }
 
-  if (meaning.identity_status === "pending") {
-    return {
-      microtool: "identity",
-      state: "hold",
-    };
+  if (identity_status === "pending") {
+    return { microtool: "identity", state: "hold" };
   }
 
-  if (meaning.identity_status === "revoked") {
-    return {
-      microtool: "identity",
-      state: "reject",
-    };
+  if (identity_status === "revoked") {
+    return { microtool: "identity", state: "reject" };
   }
 
   return {

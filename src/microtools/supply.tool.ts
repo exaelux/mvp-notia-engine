@@ -9,13 +9,6 @@ type SupplyResult = {
   };
 };
 
-type SupplyEventShape = CanonicalEvent & {
-  meaning?: {
-    object_ref?: unknown;
-    logs?: unknown;
-  };
-};
-
 const REQUIRED_LOGS: readonly string[] = [
   "cold_chain_temperature_log",
   "geo_tracking_log",
@@ -38,11 +31,9 @@ export function interpretSupply(event: CanonicalEvent): SupplyResult | null {
     };
   }
 
-  const meaning = (event as SupplyEventShape).meaning;
-
   if (
-    typeof meaning?.object_ref !== "string" ||
-    meaning.object_ref.trim().length === 0
+    typeof event.subject_ref !== "string" ||
+    event.subject_ref.trim().length === 0
   ) {
     return {
       microtool: "supply",
@@ -51,27 +42,24 @@ export function interpretSupply(event: CanonicalEvent): SupplyResult | null {
     };
   }
 
-  if (Array.isArray(meaning.logs)) {
-    const logs = new Set(
-      meaning.logs.filter((entry): entry is string => typeof entry === "string"),
+  const logs = event.attributes?.logs;
+
+  if (Array.isArray(logs)) {
+    const logSet = new Set(
+      logs.filter((entry): entry is string => typeof entry === "string"),
     );
-    const hasAllRequiredLogs = REQUIRED_LOGS.every((logId) => logs.has(logId));
+    const hasAllRequiredLogs = REQUIRED_LOGS.every((logId) => logSet.has(logId));
 
     if (hasAllRequiredLogs) {
-      return {
-        microtool: "supply",
-        state: "valid",
-      };
+      return { microtool: "supply", state: "valid" };
     }
 
-    const missingLogs = REQUIRED_LOGS.filter((logId) => !logs.has(logId));
+    const missingLogs = REQUIRED_LOGS.filter((logId) => !logSet.has(logId));
     return {
       microtool: "supply",
       state: "hold",
       reason: "missing_required_logs",
-      details: {
-        missing_logs: missingLogs,
-      },
+      details: { missing_logs: missingLogs },
     };
   }
 

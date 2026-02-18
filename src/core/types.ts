@@ -1,5 +1,4 @@
 export type StructuralStatus = "pass" | "fail";
-
 export type SemanticState = "valid" | "hold" | "reject";
 
 export interface CanonicalEvent {
@@ -7,9 +6,9 @@ export interface CanonicalEvent {
   domain: string;
   type: string;
   timestamp: string;
-  meaning?: Record<string, unknown>;
-  actor_ref?: string;
-  resource_ref?: string;
+  subject_ref: string;
+  related_refs?: string[];
+  attributes?: Record<string, unknown>;
   context?: Record<string, unknown>;
 }
 

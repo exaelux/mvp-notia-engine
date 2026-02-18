@@ -4,7 +4,8 @@
     "domain": "access",
     "type": "vehicle_entry",
     "timestamp": "2026-02-14T10:00:00Z",
-    "meaning": {
+    "subject_ref": "vehicle:plate:ABC123",
+    "attributes": {
       "action": "enter"
     }
   },
@@ -13,7 +14,8 @@
     "domain": "token",
     "type": "parking_token_validation",
     "timestamp": "2026-02-14T10:03:00Z",
-    "meaning": {
+    "subject_ref": "token:parking-session-001",
+    "attributes": {
       "token_id": "parking-session-001",
       "token_standard": "IOTA-TOKEN"
     }
@@ -23,8 +25,8 @@
     "domain": "identity",
     "type": "identity_check",
     "timestamp": "2026-02-14T10:06:00Z",
-    "meaning": {
-      "subject_ref": "did:iota:user:abc123",
+    "subject_ref": "did:iota:user:abc123",
+    "attributes": {
       "identity_status": "pending"
     }
   },
@@ -33,8 +35,8 @@
     "domain": "identity",
     "type": "identity_check",
     "timestamp": "2026-02-14T10:09:00Z",
-    "meaning": {
-      "subject_ref": "did:iota:user:abc123",
+    "subject_ref": "did:iota:user:abc123",
+    "attributes": {
       "identity_status": "verified"
     }
   },
@@ -43,7 +45,8 @@
     "domain": "access",
     "type": "vehicle_exit",
     "timestamp": "2026-02-14T10:15:00Z",
-    "meaning": {
+    "subject_ref": "vehicle:plate:ABC123",
+    "attributes": {
       "action": "exit"
     }
   }
