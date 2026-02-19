@@ -1,14 +1,23 @@
-export type AnchorStatus = "confirmed" | "pending" | "failed";
+export type AnchorStatus = string;
 
-export type AnchorResult = {
+export interface AnchorResult {
   network: string;
   transaction_id: string;
   anchored_at: string;
-  status: AnchorStatus;
-};
+  status: string;
+}
 
 export interface AnchorAdapter {
   anchor(bundle: unknown): Promise<AnchorResult>;
 }
 
-// Future: TestnetIotaAnchorAdapter implementing AnchorAdapter
+export interface ComplianceAnchorInput {
+  subject_ref: string;
+  profile_id: string;
+  result: boolean;
+  bundle_hash: string;
+}
+
+export interface ComplianceAnchorAdapter {
+  submitProof(input: ComplianceAnchorInput): Promise<AnchorResult>;
+}
