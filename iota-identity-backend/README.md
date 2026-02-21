@@ -13,6 +13,35 @@ Implements 4 endpoints for a driver identity flow:
 
 The service persists identity artifacts in the current working directory and reuses them if they already exist.
 
+## High-Level Architecture
+
+This service is the `identity` microtool inside the NOTIA deterministic pipeline.
+
+```mermaid
+flowchart TD
+    A[External Systems<br/>Identity / Access / Token / Supply / IoT / Backend Events]
+    B[Canonical Event Input JSON]
+    C[Structural Validator<br/>NOTIA Canonical Event Schema]
+    D[Deterministic Domain Router]
+    E[Isolated Microtools<br/>access / identity / token / supply]
+    F[Deterministic Aggregator<br/>reject > hold > valid]
+    G[Bundler<br/>Core Pure Semantic Object<br/>Noema-compliant Output]
+    H[Core Validator<br/>noema-core-pure.schema.json]
+    I[CLI / API Output<br/>Portable Semantic Bundle]
+    J[Optional IOTA Mock Anchor<br/>replaceable with real IOTA notarization]
+    K[Downstream Systems<br/>parking / mobility / restricted access / etc.]
+
+    A --> B --> C --> D --> E --> F --> G --> H --> I
+    I --> J
+    I --> K
+```
+
+### Responsibility of This Repository Component
+
+- Provides identity issuance and verification primitives (`DID`, `VC`, `VP`) over HTTP.
+- Integrates with IOTA Identity testnet and Stronghold key storage.
+- Exposes deterministic outputs consumed by the aggregator/bundler stages.
+
 ## Requirements
 
 - Rust toolchain (`cargo`)
