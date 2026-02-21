@@ -2,8 +2,9 @@ import { readFile } from "node:fs/promises";
 import { config } from "dotenv";
 import type { CanonicalEvent } from "../core/types.js";
 import { runBorderTest } from "./runBorderTest.js";
-import { IotaComplianceAnchorAdapter } from "../iota/compliance-anchor.js";
+import { IotaNotarizationAdapter } from "../iota/notarization-anchor.js";
 import { createHash } from "node:crypto";
+import { verifyDriverVP } from "../iota/identity-verify.js";
 
 config();
 
@@ -18,7 +19,15 @@ async function main(): Promise<void> {
   const events = JSON.parse(raw) as CanonicalEvent[];
 
   console.log(`Loading ${events.length} events...\n`);
-
+  
+  // Verify driver identity first
+  const identity = await verifyDriverVP();
+  if (!identity.verified) {
+    console.log("❌ Driver identity verification FAILED. Cannot proceed.");
+    process.exitCode = 1;
+    return;
+  }
+  console.log(`✅ Driver verified: ${identity.driverDid}\n`);
   // Run BorderTest
   const { bundles, compliance } = runBorderTest(events);
 
@@ -57,7 +66,7 @@ async function main(): Promise<void> {
     .digest("hex");
 
   // Anchor on IOTA L1
-  const adapter = new IotaComplianceAnchorAdapter();
+  const adapter = new IotaNotarizationAdapter();
 
   try {
     const anchor = await adapter.submitProof({

@@ -3,8 +3,8 @@
     "event_id": "bt-001",
     "domain": "identity",
     "type": "driver_identity_check",
-    "timestamp": "2026-02-19T09:00:00Z",
-    "subject_ref": "did:iota:driver:juan123",
+    "timestamp": "2026-02-21T09:00:00Z",
+    "subject_ref": "did:iota:testnet:0xd8c389d4140b8c4330425b79f5d7f20bb4dbc78145af93c5629ecc713852de73",
     "attributes": {
       "identity_status": "verified"
     }
@@ -13,11 +13,11 @@
     "event_id": "bt-002",
     "domain": "token",
     "type": "vehicle_cert_check",
-    "timestamp": "2026-02-19T09:01:00Z",
-    "subject_ref": "token:cert:truck-ABC123",
+    "timestamp": "2026-02-21T09:01:00Z",
+    "subject_ref": "vehicle:plate:TRUCK-BorderTest",
     "attributes": {
-      "token_id": "cert-truck-ABC123",
-      "token_standard": "IOTA-TOKEN",
+      "token_id": "0x6457ef28ae349c56fab87c0f9317890775b5d8b190fc965bf79debd9e944a7c9",
+      "certified": true,
       "expired": false
     }
   },
@@ -25,7 +25,7 @@
     "event_id": "bt-003",
     "domain": "supply",
     "type": "pharma_cargo_check",
-    "timestamp": "2026-02-19T09:02:00Z",
+    "timestamp": "2026-02-21T09:02:00Z",
     "subject_ref": "cargo:lot:pharma-789",
     "attributes": {
       "logs": [

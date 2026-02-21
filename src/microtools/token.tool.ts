@@ -20,7 +20,7 @@ export function interpretToken(event: CanonicalEvent): TokenResult | null {
   }
 
   const token_id = event.attributes?.token_id;
-  const token_standard = event.attributes?.token_standard;
+  const certified = event.attributes?.certified;
   const expired = event.attributes?.expired;
 
   if (typeof token_id !== "string" || token_id.trim().length === 0) {
@@ -31,11 +31,11 @@ export function interpretToken(event: CanonicalEvent): TokenResult | null {
     };
   }
 
-  if (typeof token_standard !== "string" || token_standard.trim().length === 0) {
+  if (certified !== true) {
     return {
       microtool: "token",
       state: "hold",
-      reason: "missing_token_standard",
+      reason: "not_certified",
     };
   }
 
