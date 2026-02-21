@@ -17,23 +17,39 @@ The service persists identity artifacts in the current working directory and reu
 
 This service is the `identity` microtool inside the NOTIA deterministic pipeline.
 
-```mermaid
-flowchart TD
-    A[External Systems<br/>Identity / Access / Token / Supply / IoT / Backend Events]
-    B[Canonical Event Input JSON]
-    C[Structural Validator<br/>NOTIA Canonical Event Schema]
-    D[Deterministic Domain Router]
-    E[Isolated Microtools<br/>access / identity / token / supply]
-    F[Deterministic Aggregator<br/>reject > hold > valid]
-    G[Bundler<br/>Core Pure Semantic Object<br/>Noema-compliant Output]
-    H[Core Validator<br/>noema-core-pure.schema.json]
-    I[CLI / API Output<br/>Portable Semantic Bundle]
-    J[Optional IOTA Mock Anchor<br/>replaceable with real IOTA notarization]
-    K[Downstream Systems<br/>parking / mobility / restricted access / etc.]
-
-    A --> B --> C --> D --> E --> F --> G --> H --> I
-    I --> J
-    I --> K
+```text
+External Systems (Identity / Access / Token / Supply / IoT / Backend events)
+                              |
+                              v
+                   Canonical Event Input (JSON)
+                              |
+                              v
+         Structural Validator (NOTIA canonical event schema)
+                              |
+                              v
+                    Deterministic Domain Router
+                              |
+                              v
+        Isolated Microtools (access / identity / token / supply)
+                              |
+                              v
+         Deterministic Aggregator (reject > hold > valid)
+                              |
+                              v
+      Bundler -> Core Pure Semantic Object (Noema-compliant output)
+                              |
+                              v
+           Core Validator (noema-core-pure.schema.json)
+                              |
+                              v
+                   CLI / API Output (portable semantic bundle)
+                              |
+                              +----------------------+
+                              |                      |
+                              v                      v
+                 Optional IOTA Mock Anchor      Downstream Systems
+                 (replaceable with real         (parking, mobility,
+                 IOTA notarization)             restricted access, etc.)
 ```
 
 ### Responsibility of This Repository Component
