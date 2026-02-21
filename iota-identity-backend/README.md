@@ -17,6 +17,29 @@ The service persists identity artifacts in the current working directory and reu
 
 This service is the `identity` microtool inside the NOTIA deterministic pipeline.
 
+### Mermaid View
+
+```mermaid
+flowchart TD
+    A[External Systems<br/>Identity / Access / Token / Supply / IoT / Backend events]
+    B[Canonical Event Input JSON]
+    C[Structural Validator<br/>NOTIA canonical event schema]
+    D[Deterministic Domain Router]
+    E[Isolated Microtools<br/>access / identity / token / supply]
+    F[Deterministic Aggregator<br/>reject > hold > valid]
+    G[Bundler<br/>Core Pure Semantic Object<br/>Noema-compliant output]
+    H[Core Validator<br/>noema-core-pure.schema.json]
+    I[CLI / API Output<br/>portable semantic bundle]
+    J[Optional IOTA Mock Anchor<br/>replaceable with real IOTA notarization]
+    K[Downstream Systems<br/>parking / mobility / restricted access / etc.]
+
+    A --> B --> C --> D --> E --> F --> G --> H --> I
+    I --> J
+    I --> K
+```
+
+### ASCII View (portable)
+
 ```text
 External Systems (Identity / Access / Token / Supply / IoT / Backend events)
                               |
@@ -57,6 +80,7 @@ External Systems (Identity / Access / Token / Supply / IoT / Backend events)
 - Provides identity issuance and verification primitives (`DID`, `VC`, `VP`) over HTTP.
 - Integrates with IOTA Identity testnet and Stronghold key storage.
 - Exposes deterministic outputs consumed by the aggregator/bundler stages.
+- Operates as an isolated identity boundary, so upstream routing and downstream bundling remain domain-agnostic.
 
 ## Requirements
 
