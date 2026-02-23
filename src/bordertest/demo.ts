@@ -6,6 +6,7 @@ import { IotaNotarizationAdapter } from "../iota/notarization-anchor.js";
 import { createHash } from "node:crypto";
 import { verifyDriverVP } from "../iota/identity-verify.js";
 import { verifyVehicleCertOnChain } from "../iota/vehicle-verify.js";
+import { verifyCargoManifestOnChain } from "../iota/cargo-verify.js";
 
 config();
 
@@ -38,6 +39,15 @@ async function main(): Promise<void> {
     return;
   }
   console.log(`✅ Vehicle verified on-chain: ${vehicle.plate} (${vehicle.vehicle_class})\n`);
+  // Verify cargo manifest on-chain
+  const cargoObjectId = process.env.CARGO_MANIFEST_OBJECT_ID ?? "";
+  const cargo = await verifyCargoManifestOnChain(cargoObjectId);
+  if (!cargo.valid) {
+    console.log(`❌ Cargo manifest invalid: ${cargo.reason}`);
+    process.exitCode = 1;
+    return;
+  }
+  console.log(`✅ Cargo verified on-chain: ${cargo.manifest_id} (${cargo.cargo_type})\n`);
   // Run BorderTest
   const { bundles, compliance } = runBorderTest(events);
 

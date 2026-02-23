@@ -6,6 +6,7 @@ import ora from "ora";
 import type { CanonicalEvent } from "../core/types.js";
 import { verifyDriverVP } from "../iota/identity-verify.js";
 import { IotaNotarizationAdapter } from "../iota/notarization-anchor.js";
+import { verifyCargoManifestOnChain } from "../iota/cargo-verify.js";
 import { verifyVehicleCertOnChain } from "../iota/vehicle-verify.js";
 import { runBorderTest } from "./runBorderTest.js";
 
@@ -115,6 +116,33 @@ async function main(): Promise<void> {
     const message = error instanceof Error ? error.message : String(error);
     vehicleSpinner.fail(
       `${chalk.red("✗")} ${chalk.cyan("Checking vehicle certificate on IOTA...")} ${chalk.red(message)}`
+    );
+    process.exitCode = 1;
+    return;
+  }
+
+  await sleep(STEP_DELAY_MS);
+  const cargoSpinner = ora(chalk.cyan("Verifying cargo manifest on IOTA...")).start();
+
+  try {
+    const cargoManifest = await verifyCargoManifestOnChain(
+      process.env.CARGO_MANIFEST_OBJECT_ID ?? ""
+    );
+
+    if (!cargoManifest.valid) {
+      throw new Error(cargoManifest.reason ?? "cargo manifest is not valid");
+    }
+
+    cargoSpinner.stopAndPersist({
+      symbol: chalk.green("✓"),
+      text:
+        `${chalk.cyan("Verifying cargo manifest on IOTA...")} ` +
+        `${chalk.yellow(cargoManifest.manifest_id)} ${chalk.cyan("(")}${chalk.yellow(cargoManifest.cargo_type)}${chalk.cyan(")")}`,
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    cargoSpinner.fail(
+      `${chalk.red("✗")} ${chalk.cyan("Verifying cargo manifest on IOTA...")} ${chalk.red(message)}`
     );
     process.exitCode = 1;
     return;
