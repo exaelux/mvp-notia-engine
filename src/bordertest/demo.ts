@@ -47,7 +47,7 @@ async function main(): Promise<void> {
     process.exitCode = 1;
     return;
   }
-  console.log(`✅ Cargo verified on-chain: ${cargo.manifest_id} (${cargo.cargo_type})\n`);
+  console.log(`✅ Cargo verified on-chain: ${cargo.manifest_id} (${cargo.manifest_id})\n`);
   // Run BorderTest
   const { bundles, compliance } = runBorderTest(events);
 

@@ -137,7 +137,7 @@ async function main(): Promise<void> {
       symbol: chalk.green("✓"),
       text:
         `${chalk.cyan("Verifying cargo manifest on IOTA...")} ` +
-        `${chalk.yellow(cargoManifest.manifest_id)} ${chalk.cyan("(")}${chalk.yellow(cargoManifest.cargo_type)}${chalk.cyan(")")}`,
+        `${chalk.yellow(cargoManifest.manifest_id)}`,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);

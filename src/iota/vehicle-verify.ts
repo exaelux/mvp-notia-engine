@@ -1,11 +1,12 @@
 import { IotaClient } from "@iota/iota-sdk/client";
 
+// Noema principle: read declared states, not raw data.
+// plate is a public identifier. owner_did is never accessed.
+
 export interface VehicleCertResult {
   valid: boolean;
   plate: string;
-  owner_did: string;
   vehicle_class: string;
-  active: boolean;
   reason?: string;
 }
 
@@ -21,19 +22,17 @@ export async function verifyVehicleCertOnChain(
   });
 
   if (!obj.data?.content || obj.data.content.dataType !== "moveObject") {
-    return { valid: false, plate: "", owner_did: "", vehicle_class: "", active: false, reason: "object_not_found" };
+    return { valid: false, plate: "", vehicle_class: "", reason: "object_not_found" };
   }
 
   const fields = (obj.data.content as { fields?: Record<string, unknown> }).fields ?? {};
 
-  const active = fields["active"] as boolean;
-  const plate = fields["plate"] as string;
-  const owner_did = fields["owner_did"] as string;
+  // Read only verifiable states and public identifiers
+  const active        = fields["active"] as boolean;
+  const plate         = fields["plate"] as string;
   const vehicle_class = fields["vehicle_class"] as string;
 
-  if (!active) {
-    return { valid: false, plate, owner_did, vehicle_class, active, reason: "certificate_revoked" };
-  }
+  if (!active) return { valid: false, plate, vehicle_class, reason: "certificate_revoked" };
 
-  return { valid: true, plate, owner_did, vehicle_class, active };
+  return { valid: true, plate, vehicle_class };
 }
