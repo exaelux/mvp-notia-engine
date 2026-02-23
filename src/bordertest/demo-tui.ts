@@ -6,6 +6,7 @@ import ora from "ora";
 import type { CanonicalEvent } from "../core/types.js";
 import { verifyDriverVP } from "../iota/identity-verify.js";
 import { IotaNotarizationAdapter } from "../iota/notarization-anchor.js";
+import { verifyVehicleCertOnChain } from "../iota/vehicle-verify.js";
 import { runBorderTest } from "./runBorderTest.js";
 
 config();
@@ -95,18 +96,20 @@ async function main(): Promise<void> {
   await sleep(STEP_DELAY_MS);
   const vehicleSpinner = ora(chalk.cyan("Checking vehicle certificate on IOTA...")).start();
 
-  let vehicleObjectId = "";
   try {
-    const tokenEvent = events.find((event) => event.domain === "token");
-    const tokenId = tokenEvent?.attributes?.token_id;
-    if (typeof tokenId !== "string" || tokenId.trim().length === 0) {
-      throw new Error("missing vehicle certificate object ID");
+    const vehicleCert = await verifyVehicleCertOnChain(
+      process.env.VEHICLE_CERTIFICATE_OBJECT_ID ?? ""
+    );
+
+    if (!vehicleCert.valid) {
+      throw new Error(vehicleCert.reason ?? "vehicle certificate is not valid");
     }
-    vehicleObjectId = tokenId;
 
     vehicleSpinner.stopAndPersist({
       symbol: chalk.green("✓"),
-      text: `${chalk.cyan("Checking vehicle certificate on IOTA...")} ${chalk.yellow(vehicleObjectId)}`,
+      text:
+        `${chalk.cyan("Checking vehicle certificate on IOTA...")} ` +
+        `${chalk.yellow(vehicleCert.plate)} ${chalk.cyan("(")}${chalk.yellow(vehicleCert.vehicle_class)}${chalk.cyan(")")}`,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);

@@ -16,7 +16,7 @@
     "timestamp": "2026-02-21T09:01:00Z",
     "subject_ref": "vehicle:plate:TRUCK-BorderTest",
     "attributes": {
-      "token_id": "0x6457ef28ae349c56fab87c0f9317890775b5d8b190fc965bf79debd9e944a7c9",
+      "token_id": "0xa099c94a8ee9b7bca40eda065170ec48e836967c6712d5349509af5987e5d226",
       "certified": true,
       "expired": false
     }
