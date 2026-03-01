@@ -2,12 +2,37 @@ node_modules/
 dist/
 *.log
 .env
+.env.*
+!.env.example
 .DS_Store
 coverage/
 
 docs/iota-update-checklist.md
 
 private/
+profiles/*.local.json
+secrets/
+*.secret
+*.secrets
+*.credentials
+*.token
+*.seed
+*.mnemonic
+*.pem
+*.key
+*.p12
+*.pfx
+*.jwk
+*.keystore
+*.stronghold
+*.jwt
+*.pid
+*.tmp
+*.bak
 
 # Move build artifacts
 move/**/build/
+
+# Rust local artifacts
+target/
+**/target/
